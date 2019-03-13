@@ -1,0 +1,13 @@
+{% block content %}
+    <div>
+        <h2> Result</h2>
+    {% if prediction == 'test'%}
+	<h2 style="color:red;">Spam</h2>
+	{% else %}
+	<h2 style="color:blue;">Not a Spam (It is a Ham)</h2>
+    {% endif %}
+    {{fire}}
+    
+    </div>
+{% endblock %}
+
