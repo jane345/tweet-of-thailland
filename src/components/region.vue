@@ -9,7 +9,7 @@
       <!-- </div> -->
       <br>
       <div class="ui three link cards" style="margin: auto;">
-        <div class="card" v-for="(landmark,index) in LandMark" :key="index" >
+        <div class="ui card" v-for="(landmark,index) in LandMark" :key="index" >
           <div class="image"  @click="gotoDetail(landmark)">
             <img :src="Src[index]">
           </div>
@@ -23,15 +23,11 @@
 
 <script>
 import {fire} from './firebase'
-// var field = []
-// var ref = fire.database().ref('region')
 export default {
   data () {
     return {
       LandMark: [],
       Src: []
-      // LandMark: ['ตลาดนัดรถไฟรัชดา', 'จตุจักร', 'ตลาดน้ำตลิ่งชัน', 'เสาชิงช้า', 'ท่ามหาราช', 'ภูเขาทอง',
-      //  'วังหลัง', 'พระบรมมหาราชวัง', 'central world', 'สนามหลวง', 'อัมพวา', 'พุทธมณฑล', 'องค์พระปฐมเจดีย์']
     }
   },
   methods: {
@@ -55,13 +51,10 @@ export default {
     var landmarkRef = fire.database().ref().child('/region/' + this.$route.params.region)
     landmarkRef.on('value', (snapshot) => {
       snapshot.forEach((childSnapshot) => {
-        // var childKey = childSnapshot.key
-        // var childData = childSnapshot.val()
         this.LandMark.push(childSnapshot.key)
         this.Src.push(childSnapshot.val().src)
       })
     })
-    console.log(this.Src.length)
   }
 }
 </script>
@@ -84,7 +77,19 @@ export default {
   background-color:#27549E;
 }
 .cards {
-  width: 90%;
+  width: 85%;
   font-size: 80%;
+}
+.image {
+   overflow: hidden;
+   position: relative;
+   height: 250px;
+}
+
+.image img {
+   max-width: 100%;
+   min-height: 100%;
+   min-width: 100%;
+   object-fit: cover;
 }
 </style>

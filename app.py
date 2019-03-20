@@ -10,13 +10,13 @@ import pyrebase
 import time
 
 # ////////////////////////////
-import tensorflow as tf
-from sklearn import svm
-from sklearn.svm import SVC
-import numpy as np
-import project
-import embedded
-import pickle
+# import tensorflow as tf
+# from sklearn import svm
+# from sklearn.svm import SVC
+# import numpy as np
+# import project
+# import embedded
+# import pickle
 # ////////////////////////////////
 
 firebase = firebase.FirebaseApplication('https://tweet-of-thailand.firebaseio.com', None)
@@ -32,57 +32,68 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 CORS(app)
 # app.config.from_object(__name__)
-global graph,model_sentiment,model_subject
-model_sentiment = pickle.load(open("E:\\Senior_Project\\1_code\\deep\\website(vue)\\my-project\\SVM_linear_new.pkl", 'rb'))
-model_subject = pickle.load(open("E:\\Senior_Project\\1_code\\deep\\website(vue)\\my-project\\subject_rbf_multi.pkl", 'rb'))
-graph = tf.get_default_graph()
-arr = []
+# global graph,model_sentiment,model_subject
+# model_sentiment = pickle.load(open("E:\\Senior_Project\\1_code\\deep\\website(vue)\\my-project\\SVM_linear_new.pkl", 'rb'))
+# model_subject = pickle.load(open("E:\\Senior_Project\\1_code\\deep\\website(vue)\\my-project\\subject_rbf_multi.pkl", 'rb'))
+# graph = tf.get_default_graph()
+# arr = []
 class MyStreamListener(StreamListener):
     def __init__(self, api=None):
         super(MyStreamListener, self).__init__()
         self.num_tweets = 0
 
     def on_status(self, status):
-        global arr
+        # global arr
         self.num_tweets += 1
-        print(arr)
-        if self.num_tweets < 5:
+        # print(arr)
+        if self.num_tweets < 3:
             # if (not status.retweeted) and ('RT @' not in status.text):
-                # firebase.post('/tweets/',{ 'tweet': status.text })
-            if (status.text in arr):
-                print('duplicate')
-            else:
-                print(status.text)
-                arr.append(status.text)
-            return True
+            firebase.post('/tweets/',{ 'tweet': str(self.num_tweets)+status.text })
+            print(status.text)
+        #     if (status.text in arr):
+        #         print('duplicate')
+        #     else:
+        #         print(status.text)
+        #         arr.append(status.text)
+        #     return True
         else:
-            classify(arr)
-            arr = []
+        #     classify(arr)
+        #     arr = []
             return False
 
-def classify(status):
-    print('feed to model')
-    with graph.as_default():
-        for i in range(0,len(status)):
-            print(i,': ',status[i])
-            token = project.tokenized_word(status[i])
-            embedded_vec = embedded.embedded_word(token).reshape(1,-1)
+# def classify(status):
+#     print('feed to model')
+#     with graph.as_default():
+#         for i in range(0,len(status)):
+#             print(i,': ',status[i])
+#             token = project.tokenized_word(status[i])
+#             embedded_vec = embedded.embedded_word(token).reshape(1,-1)
             
-            predict_sentiment = model_sentiment.predict_proba(embedded_vec)
-            predict_subject = model_subject.predict(embedded_vec)
+#             predict_sentiment = model_sentiment.predict_proba(embedded_vec)
+#             predict_subject = model_subject.predict(embedded_vec)
             
-            sentiment = np.array2string(np.argmax(predict_sentiment))
-            subject = np.array2string(np.argmax(predict_subject))
+#             sentiment = np.array2string(np.argmax(predict_sentiment))
+#             subject = np.array2string(np.argmax(predict_subject))
             
-            firebase.post('/tweets/',{ 'tweet': status[i], 'sentiment': sentiment, 'subject': subject })
-            print('write '+ status[i] + ' to firebase ')
-
+#             firebase.post('/tweets/',{ 'tweet': status[i], 'sentiment': sentiment, 'subject': subject })
+#             print('write '+ status[i] + ' to firebase ')
+ch = 0
 @app.route('/tweet', methods=['GET'])
 def getTweet():
-    print('request from web')
-    arr
-    myStream = Stream(auth, MyStreamListener())
-    myStream.filter(track=[str(request.args.get('landmark'))])
+    global ch
+    ch = request.args.get('status')
+    while (ch == '0' or ch == '1'):
+        if (ch == '0' ):
+            print('go back')
+            break
+        if (ch == '1'):
+            print('request from web')
+            myStream = Stream(auth, MyStreamListener())
+            myStream.filter(track=['test'])
+            print('retrieve tweet-------------------')
+        time.sleep(2)
+        # str(request.args.get('landmark'))
+    
     # for i in range (0,1):
     #     firebase.post('/tweets/',{ 'tweet': request.args.get('landmark') })
     #     # firebase.post('/tweet/s',{ 'tweets': item['text']})

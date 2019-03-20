@@ -83,11 +83,7 @@
       </div>
   </div> <!-- two stack -->
   <!-- mapppppppppppppppppppppppppppppppppppppppp -->
-  <!-- <button class="tiny ui green button"  @click="displayRoute" style="margin-left: 40%; font-family: 'Caveat Brush', cursive; font-size: 1vw;"><i class="location arrow icon"></i>Direction</button> -->
   <div id="map" style="width: 60%; height: 400px; margin: auto;"></div>
-  <!-- <button @click="start()">start</button>
-  <button @click="SendtoPython()">sent key</button> -->
-
 </div>
 </template>
 
@@ -126,9 +122,11 @@ export default {
       clearInterval(this.EnvironmentInterval)
       clearInterval(this.TrafficInterval)
       this.$router.go(-1)
+      this.SendtoPython(0)
     },
     gotoHome () {
       this.$router.replace('/')
+      this.SendtoPython(0)
     },
     calltweet (subject) {
       // this.subject = sub
@@ -205,7 +203,7 @@ export default {
         document.getElementById('list_negative').appendChild(node)
       }
     },
-    SendtoPython () {
+    SendtoPython (status) {
       axios({
         method: 'get',
         url: Url,
@@ -215,6 +213,7 @@ export default {
         useCredentails: true,
         params: {
           landmark: this.$route.params.landmark,
+          status: status
           }
       })
         .then(function (response) {
@@ -223,7 +222,7 @@ export default {
     }
   },
   mounted () {
-    this.SendtoPython()
+    this.SendtoPython(1)
     // this.SendInterval = setInterval(this.SendtoPython,60000)
     this.$gmapApiPromiseLazy().then(() => {
       var directionsService = new google.maps.DirectionsService()
