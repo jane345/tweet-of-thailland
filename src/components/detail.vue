@@ -67,18 +67,14 @@
     </div> <!--div ui segment -->
     </div> <!-- thirteen column -->
     <div class="three wide column" style="padding-left: 0">
-    <div class="center aligned ui segment" style="width:100%; height: 500px; margin-left: 0;">
-      <!-- <div class="zoom"> -->
-        <!-- <a href="https://twitter.com/drballban/status/1095374690862788608"> -->
-          <!-- <img :src="'/static/central.jpeg'"></a> -->
-          <!-- <img v-for="(ind,index) in loop" :key="index" :src="'/static/'+ $route.params.landmark + '/' + ind + '.jpg'"> -->
-          <!-- <span><img :src="'/static/central.jpeg'" alt="image"></span>
-          </a> -->
-          <!-- imageeeeeeeeeeeeeeeeeeeeeeeee -->
-          <!-- <div :key="key" v-for="(ind, key) in loop" >
-            <img :src="'/static/'+ $route.params.landmark + '/' + ind + '.jpg'" class="zoom" >
-          </div> -->
-          <!-- imageeeeeeeeeeeeeeeeeeeeeeeeee -->
+    <div class="center aligned ui segment" style="width:100%; margin-left: 0; padding: 0;">
+        <div class="ui two stackable cards" style="margin: auto; padding: 0;">
+        <div class="card" :key="key" v-for="(ind, key) in urlImage">
+          <a :href="urlTwitter[key]" target="popup">
+            <img :src="ind" class="zoom">
+          </a>
+        </div>
+        </div>
         </div>
       </div>
   </div> <!-- two stack -->
@@ -101,15 +97,16 @@ export default {
       subject: '',
       sub: '',
       detail: '',
-      center: {lat: 0, lng: 0}, // { lat: 13.746909, lng: 100.539329 },
+      center: {lat: 0, lng: 0},
       markers: [],
       currentPlace: {lat: 0, lng: 0},
-      loop: [1, 2],
       SendInterval: '',
       NewsInterval: '',
       FoodInterval: '',
       EnvironmentInterval: '',
-      TrafficInterval: ''
+      TrafficInterval: '',
+      urlImage: [],
+      urlTwitter: []
     }
   },
   methods: {
@@ -222,7 +219,7 @@ export default {
     }
   },
   mounted () {
-    this.SendtoPython(1)
+    // this.SendtoPython(1)
     // this.SendInterval = setInterval(this.SendtoPython,60000)
     this.$gmapApiPromiseLazy().then(() => {
       var directionsService = new google.maps.DirectionsService()
@@ -262,6 +259,18 @@ export default {
       this.center.lng = parseFloat(snapshot.val().lng)
       this.detail = snapshot.val().detail
     })
+    var urlImageRef = ref.child('/url')
+    urlImageRef.on('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        this.urlImage.push(childSnapshot.val())
+      })
+    })
+    var urlTwitterRef = ref.child('/twitter')
+    urlTwitterRef.on('value', (snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        this.urlTwitter.push(childSnapshot.val())
+      })
+    })
   }
 }
 </script>
@@ -289,7 +298,7 @@ h3 {
   text-align: center;
 }
 img {
-  width: 60%;
+  width: 100%;
 }
 .zoom {
   transition: transform .2s; /* Animation */
@@ -297,7 +306,7 @@ img {
 
 .zoom:hover {
   position: absolute;
-  transform: scale(2);
+  transform: scale(6);
   transform-origin: center right;
   z-index: 99;
   /* (2000% zoom - Note: if the zoom is too large, it will go outside of the viewport) */

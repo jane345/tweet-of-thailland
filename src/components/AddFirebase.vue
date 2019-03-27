@@ -15,7 +15,11 @@
     <textarea rows="10" cols="30" id="DetailLandMark" placeholder="detail"></textarea>
     <input type="text" id="lat" placeholder="lat">
     <input type="text" id="lng" placeholder="lng">
-    <input type="text" id="src" placeholder="link img">
+    <input type="text" id="src" placeholder="link cover img">
+    <br>
+    <input type="text" id="no" placeholder="no">
+    <input type="text" id="url_img" placeholder="link url img">
+    <input type="text" id="url_twitter" placeholder="link url twitter">
     <button type="submit" @click="addDetail()">Update</button>
       <br>
       <br>
@@ -95,6 +99,11 @@ export default {
       if (lat !== '') { reRef.update({'lat': lat}) }
       if (lng !== '') { reRef.update({'lng': lng}) }
       if (src !== '') { reRef.update({'src': src}) }
+      var url = document.getElementById('url_img').value
+      var twitter = document.getElementById('url_twitter').value
+      var no = document.getElementById('no').value
+      if (url !== '') { reRef.child('/url').update({[no]: url}) }
+      if (twitter !== '') { reRef.child('/twitter').update({[no]: twitter}) }
       alert('updated successfully!')
     },
     edit () {
